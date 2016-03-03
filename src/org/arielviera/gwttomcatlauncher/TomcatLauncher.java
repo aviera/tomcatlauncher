@@ -3,10 +3,6 @@ package org.arielviera.gwttomcatlauncher;
 import com.google.gwt.core.ext.ServletContainer;
 import com.google.gwt.core.ext.ServletContainerLauncher;
 import com.google.gwt.core.ext.TreeLogger;
-import com.google.gwt.core.ext.UnableToCompleteException;
-import org.apache.catalina.Context;
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.startup.Tomcat;
 
 import java.io.File;
 import java.net.BindException;
@@ -17,32 +13,12 @@ import java.net.BindException;
 public class TomcatLauncher extends ServletContainerLauncher {
     @Override
     public ServletContainer start(TreeLogger logger, final int port, File appRootDir) throws BindException, Exception {
-        final Tomcat tomcat = new Tomcat();
-        tomcat.setPort(port);
+        System.out.println("port " + port + " appRootDir " + appRootDir);
+        return new TomcatServletContainer(port, "/", appRootDir.getPath());
+    }
 
-        tomcat.start();
-
-        final Context context = tomcat.addWebapp("/", appRootDir.getPath());
-        return new ServletContainer() {
-            @Override
-            public int getPort() {
-                return port;
-            }
-
-            @Override
-            public void refresh() throws UnableToCompleteException {
-                context.reload();
-            }
-
-            @Override
-            public void stop() throws UnableToCompleteException {
-                try {
-                    tomcat.stop();
-                } catch (LifecycleException e) {
-                    throw new UnableToCompleteException();
-                }
-            }
-        };
-
+    public static void main(String[] args) throws Exception {
+        TomcatLauncher tc = new TomcatLauncher();
+        tc.start(null, 41233, new File("C:\\Users\\avd\\.IntelliJIdea14\\system\\gwt\\X901.210fd13\\frontend.ca76f84c\\run\\www"));
     }
 }
